@@ -1,34 +1,36 @@
+from flask import Flask, render_templates, request
 import math
 
-print("Welcome to my calculator")
-print("------------------------------------------------")
+app = Flask(__name__)
 
-while True:
-    number1 = int(input("Put a first number: "))
-    operation = input("Put the operation symbol you want (e.g., +, -, *, /, **, square): ")
 
-    if operation == 'square':
+@app.route('/')
+def index():
+    return render_templates('calculator.html')
+
+
+@app.route('/calculate', methods=['POST'])
+def calculate():
+    number1 = int(request.form['number1'])
+    number2 = int(request.form['number2'])
+    operation = request.form['operation']
+    result = None
+
+    if operation == "+":
+        result = number1 + number2
+    elif operation == '-':
+        result = number1 - number2
+    elif operation == '*':
+        result = number1 * number2
+    elif operation == '/':
+        result = number1 / number2
+    elif operation == '**':
+        result = pow(number1, number2)
+    elif operation == 'square':
         result = math.sqrt(number1)
-        print(f"The result is: {result}")
-    else:
-        number2 = int(input("Put a second number: "))
-        if operation == "+":
-            result = number1 + number2
-        elif operation == '-':
-            result = number1 - number2
-        elif operation == '*':
-            result = number1 * number2
-        elif operation == '/':
-            result = number1 / number2
-        elif operation == '**':
-            result = pow(number1, number2)
-        else:
-            print("You put a wrong operation symbol")
-            continue
 
-        print(f"The result is: {result}")
+    return render_templates('result.html', result=result)
 
-    choice = input("Do you want to continue (Y/N)? ").lower()
-    if choice != "y":
-        print("Thanks for using my calculator!")
-        break
+
+if __name__ == "__main__":
+    app.run(debug=True)
